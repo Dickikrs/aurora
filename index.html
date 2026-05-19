@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Form</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    input, button { display: block; width: 100%; padding: 10px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <h2>Order Produk</h2>
+  <input type="text" id="sku" placeholder="Masukkan SKU Produk">
+  <input type="text" id="tujuan" placeholder="Masukkan Nomor Tujuan">
+  <button onclick="kirimOrder()">Beli Sekarang</button>
+
+  <script>
+    // GANTI DENGAN URL WEB APP ANDA DARI GOOGLE APPS SCRIPT
+    const API_URL = "https://script.google.com/macros/s/AKfycbwaFBjSvjKHlTx7A2gj6KXac9fMoCgUb1Ox3j8fyw6FF_tI7rXYzK_Td2qmSdfHyTf3CA/exec";
+
+    function kirimOrder() {
+      const data = {
+        action: "order",
+        sku: document.getElementById('sku').value,
+        tujuan: document.getElementById('tujuan').value
+      };
+
+      fetch(API_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      })
+      .then(() => alert("Pesanan sedang diproses!"))
+      .catch(err => alert("Error: " + err));
+    }
+  </script>
+</body>
+</html>

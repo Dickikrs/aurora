@@ -1,129 +1,94 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login Member</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-  <style>
-    body { 
-      background-color: #f8f9fa; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      height: 100vh; 
-      margin: 0;
-    }
-    .card { 
-      width: 100%; 
-      max-width: 400px; 
-      padding: 25px; 
-      border-radius: 12px; 
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
-    }
-    .btn-primary {
-      background-color: #0d6efd;
-      border: none;
-    }
-    .btn-primary:hover {
-      background-color: #0b5ed7;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurora Store - Login</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background: #121212; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .login-container { background: #1e1e1e; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+        h2 { text-align: center; margin-bottom: 24px; color: #00adb5; }
+        .input-group { margin-bottom: 16px; }
+        .input-group label { display: block; margin-bottom: 8px; color: #aaaaaa; font-size: 14px; }
+        .input-group input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #333; background: #252525; color: #fff; font-size: 16px; }
+        .input-group input:focus { border-color: #00adb5; outline: none; }
+        button { width: 100%; padding: 12px; background: #00adb5; border: none; border-radius: 6px; color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s; margin-top: 10px; }
+        button:hover { background: #007a80; }
+        .error-msg { color: #ff5252; text-align: center; margin-top: 15px; font-size: 14px; display: none; }
+    </style>
 </head>
 <body>
 
-  <div class="card">
-    <h3 class="text-center mb-4" style="font-weight: 600; color: #333;">Login Member</h3>
-    
-    <div id="alertBox" class="alert d-none"></div>
-    
+<div class="login-container">
+    <h2>AURORA STORE</h2>
     <form id="loginForm">
-      <div class="mb-3">
-        <label class="form-label" style="font-weight: 500;">Username</label>
-        <input type="text" id="username" class="form-control" placeholder="Masukkan username" required autocomplete="off">
-      </div>
-      <div class="mb-3">
-        <label class="form-label" style="font-weight: 500;">Password</label>
-        <input type="password" id="password" class="form-control" placeholder="Masukkan password" required>
-      </div>
-      <button type="submit" id="btnSubmit" class="btn btn-primary w-100 py-2" style="font-weight: 500;">Masuk</button>
+        <div class="input-group">
+            <label for="username">Username / Email</label>
+            <input type="text" id="username" placeholder="Masukkan username atau email" required>
+        </div>
+        <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Masukkan password" required>
+        </div>
+        <button type="submit" id="btnLogin">Masuk</button>
+        <div id="errorMsg" class="error-msg"></div>
     </form>
-    
-    <div class="text-center mt-3">
-      <p class="mb-0 text-muted">Belum punya akun? <a href="daftar.html" style="text-decoration: none; color: #0d6efd; font-weight: 500;">Daftar di sini</a></p>
-    </div>
-  </div>
+</div>
 
-  <script>
-    // =========================================================================
-    // 🚨 WAJIB: PASTIKAN LINK DI BAWAH INI ADALAH URL WEB APP (DEPLOYMENT 'new') LO!
-    // =========================================================================
-    const API_URL = "https://script.google.com/macros/s/AKfycbwaFBjSvjKHlTx7A2gj6KXac9fMoCgUb1Ox3j8fyw6FF_tI7rXYzK_Td2qmSdfHyTf3CA/exec"; 
+<script>
+    // MASUKKAN URL /dev DARI PROJECT BARU LO DI SINI
+    const API_URL = "https://script.google.com/macros/s/AKfycby-yrQviIoIeH0pPL5QmMI1L5hdI9zQ19E0Ym7VLHCHF5QQUgSkleqXpSrvtXVz1rkC/exec";
 
     document.getElementById('loginForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const user = document.getElementById('username').value.trim();
-      const pass = document.getElementById('password').value.trim();
-      const btn = document.getElementById('btnSubmit');
-      const alertBox = document.getElementById('alertBox');
-      
-      // Mengunci tombol biar ga di-klik dwi-kali saat proses kirim data
-      btn.disabled = true;
-      btn.innerText = 'Memproses...';
-      
-      // Sembunyikan alert lama setiap kali tombol ditekan ulang
-      alertBox.classList.add('d-none');
-      
-      // Membawa payload objek data ter-standar untuk dibaca Apps Script terbaru
-      const payload = { 
-        action: 'login', 
-        username: user, 
-        password: pass 
-      };
-      
-      fetch(API_URL, {
-        method: 'POST',
-        mode: 'cors', // Mengizinkan jalur akses lintas domain (CORS)
-        headers: {
-          'Content-Type': 'text/plain;charset=utf-8' // Menggunakan text/plain agar browser lempeng mengirim data tanpa pre-flight CORS check
-        },
-        body: JSON.stringify(payload)
-      })
-      .then(res => {
-        if (!res.ok) {
-          throw new Error('Server merespon dengan status error: ' + res.status);
-        }
-        return res.json();
-      })
-      .then(res => {
-        // Kembalikan status tombol seperti semula
-        btn.disabled = false;
-        btn.innerText = 'Masuk';
+        e.preventDefault();
         
-        // Tampilkan pesan sukses/gagal dari Apps Script
-        alertBox.className = "alert " + (res.success ? "alert-success" : "alert-danger");
-        alertBox.innerText = res.message;
-        alertBox.classList.remove('d-none');
-        
-        // Jika status sukses true dari spreadsheet, simpan session dan lempar ke halaman utama
-        if(res.success) {
-          localStorage.setItem('user_session', JSON.stringify(res.user));
-          setTimeout(() => { 
-            window.location.href = "index.html"; 
-          }, 1200);
-        }
-      })
-      .catch(err => {
-        // Penanganan jika bener-bener terjadi kendala jaringan terputus atau salah pasang link URL
-        btn.disabled = false;
-        btn.innerText = 'Masuk';
-        alertBox.className = "alert alert-danger";
-        alertBox.innerText = "Terjadi kesalahan jaringan! (Detail: " + err.message + ")";
-        alertBox.classList.remove('d-none');
-        console.error("Eror Fetch:", err);
-      });
+        const usernameVal = document.getElementById('username').value.trim();
+        const passwordVal = document.getElementById('password').value.trim();
+        const btnLogin = document.getElementById('btnLogin');
+        const errorMsg = document.getElementById('errorMsg');
+
+        btnLogin.innerText = "Memverifikasi...";
+        btnLogin.disabled = true;
+        errorMsg.style.display = "none";
+
+        // Menggunakan method POST dengan format text/plain agar terhindar dari pemblokiran CORS pra-perizinan browser
+        fetch(API_URL, {
+            method: "POST",
+            mode: "cors",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({
+                action: "login",
+                username: usernameVal,
+                password: passwordVal
+            })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Koneksi gagal atau diblokir oleh sistem keamanan browser.");
+            return response.json();
+        })
+        .then(data => {
+            btnLogin.innerText = "Masuk";
+            btnLogin.disabled = false;
+
+            if (data.success) {
+                // Simpan username asli dari database ke dalam session local browser
+                localStorage.setItem("user_aurora", data.user.username);
+                alert("Login Berhasil! Selamat datang, " + data.user.username);
+                window.location.href = "index.html";
+            } else {
+                // TERTOLAK KLO USER TIDAK TERDAFTAR / ASAL-ASALAN
+                errorMsg.innerText = data.message || "Username atau Password salah.";
+                errorMsg.style.display = "block";
+            }
+        })
+        .catch(err => {
+            btnLogin.innerText = "Masuk";
+            btnLogin.disabled = false;
+            errorMsg.innerText = "Detail Error: " + err.message + "\n(Jika pakai localhost di HP, pastikan server lokal lo mendukung HTTPS atau tes langsung lewat GitHub Pages).";
+            errorMsg.style.display = "block";
+        });
     });
-  </script>
+</script>
 </body>
 </html>

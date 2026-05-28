@@ -3,92 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aurora Store - Login</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background: #121212; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .login-container { background: #1e1e1e; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
-        h2 { text-align: center; margin-bottom: 24px; color: #00adb5; }
-        .input-group { margin-bottom: 16px; }
-        .input-group label { display: block; margin-bottom: 8px; color: #aaaaaa; font-size: 14px; }
-        .input-group input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #333; background: #252525; color: #fff; font-size: 16px; }
-        .input-group input:focus { border-color: #00adb5; outline: none; }
-        button { width: 100%; padding: 12px; background: #00adb5; border: none; border-radius: 6px; color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s; margin-top: 10px; }
-        button:hover { background: #007a80; }
-        .error-msg { color: #ff5252; text-align: center; margin-top: 15px; font-size: 14px; display: none; }
-    </style>
+    <title>Login Member - Aurorastore</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="login-container">
-    <h2>AURORA STORE</h2>
-    <form id="loginForm">
-        <div class="input-group">
-            <label for="username">Username / Email</label>
-            <input type="text" id="username" placeholder="Masukkan username atau email" required>
+<div id="toast" class="fixed top-5 right-5 z-50 hidden px-6 py-3 rounded-xl text-white shadow-lg transition-opacity duration-300"></div>
+
+<div id="loader" class="loader-container">
+    <div class="planet"></div>
+</div>
+
+<div class="glass-card">
+    <h2 class="text-3xl font-bold mb-6 text-white text-center">Login Member</h2>
+    
+    <form id="loginForm" class="space-y-4">
+        <div class="text-white">
+            <label class="block text-sm">Email</label>
+            <input type="email" id="email" required placeholder="email@example.com"
+                class="w-full p-3 rounded-xl mt-1 outline-none text-gray-800">
         </div>
-        <div class="input-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" placeholder="Masukkan password" required>
+        
+        <div class="relative text-white">
+            <label class="block text-sm">Password</label>
+            <div class="relative mt-1">
+                <input type="password" id="password" required minlength="6" placeholder="********"
+                    class="w-full p-3 rounded-xl outline-none text-gray-800 pr-10">
+                <span onclick="togglePassword()" class="absolute right-4 top-3.5 cursor-pointer text-gray-500 hover:text-blue-500 transition">
+                    <i id="eyeIcon" class="fas fa-eye"></i>
+                </span>
+            </div>
         </div>
-        <button type="submit" id="btnLogin">Masuk</button>
-        <div id="errorMsg" class="error-msg"></div>
+
+        <button type="submit" id="loginBtn" class="w-full text-white p-3 rounded-xl font-semibold mt-4 hover:opacity-90 transition">Login</button>
     </form>
+
+    <div class="mt-6 text-center text-white">
+        <p class="text-sm">Belum punya akun?</p>
+        <a href="index.html" class="font-bold underline">Daftar di sini</a>
+    </div>
+</div>
+
+<div class="floating-astronaut">
+    <img src="https://pngimg.com/uploads/astronaut/astronaut_PNG41.png" alt="Astronaut">
 </div>
 
 <script>
-    // MASUKKAN URL /dev DARI PROJECT BARU LO DI SINI
-    const API_URL = "https://script.google.com/macros/s/AKfycby-yrQviIoIeH0pPL5QmMI1L5hdI9zQ19E0Ym7VLHCHF5QQUgSkleqXpSrvtXVz1rkC/exec";
+    // 1. Loading Screen
+    window.addEventListener("load", () => {
+        const loader = document.getElementById("loader");
+        loader.style.opacity = "0";
+        setTimeout(() => { loader.style.display = "none"; }, 500);
+    });
 
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
+    // 2. Fungsi Toast
+    function showToast(message, type) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = `fixed top-5 right-5 z-50 px-6 py-3 rounded-xl text-white shadow-lg transition-all duration-500 ${type === 'error' ? 'bg-red-500' : 'bg-green-500'}`;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+
+    // 3. Fungsi Toggle Password
+    function togglePassword() {
+        const passwordInput = document.getElementById("password");
+        const eyeIcon = document.getElementById("eyeIcon");
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            eyeIcon.classList.replace("fa-eye", "fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            eyeIcon.classList.replace("fa-eye-slash", "fa-eye");
+        }
+    }
+
+    // 4. Form Login Submission
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDwLZQHFxlzauMn1USwiuJzig9amx5dRDiHO1P_BGXHebCzZ5lsNMsWwyyG0Huh991/exec'; 
+    
+    document.getElementById('loginForm').onsubmit = async (e) => {
         e.preventDefault();
         
-        const usernameVal = document.getElementById('username').value.trim();
-        const passwordVal = document.getElementById('password').value.trim();
-        const btnLogin = document.getElementById('btnLogin');
-        const errorMsg = document.getElementById('errorMsg');
+        const btn = document.getElementById('loginBtn');
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
 
-        btnLogin.innerText = "Memverifikasi...";
-        btnLogin.disabled = true;
-        errorMsg.style.display = "none";
+        btn.innerText = "Memproses...";
+        btn.disabled = true;
 
-        // Menggunakan method POST dengan format text/plain agar terhindar dari pemblokiran CORS pra-perizinan browser
-        fetch(API_URL, {
-            method: "POST",
-            mode: "cors",
-            headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify({
-                action: "login",
-                username: usernameVal,
-                password: passwordVal
-            })
-        })
-        .then(response => {
-            if (!response.ok) throw new Error("Koneksi gagal atau diblokir oleh sistem keamanan browser.");
-            return response.json();
-        })
-        .then(data => {
-            btnLogin.innerText = "Masuk";
-            btnLogin.disabled = false;
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    action: "login", 
+                    email: email, 
+                    password: password 
+                })
+            });
+            const result = await response.json();
 
-            if (data.success) {
-                // Simpan username asli dari database ke dalam session local browser
-                localStorage.setItem("user_aurora", data.user.username);
-                alert("Login Berhasil! Selamat datang, " + data.user.username);
-                window.location.href = "index.html";
+            if (result.status === "success") {
+                showToast("Login Berhasil! Mengalihkan...", "success");
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('userName', result.nama);
+                setTimeout(() => { window.location.href = "dashboard.html"; }, 1500);
             } else {
-                // TERTOLAK KLO USER TIDAK TERDAFTAR / ASAL-ASALAN
-                errorMsg.innerText = data.message || "Username atau Password salah.";
-                errorMsg.style.display = "block";
+                showToast(result.message || "Login Gagal!", "error");
+                btn.innerText = "Login";
+                btn.disabled = false;
             }
-        })
-        .catch(err => {
-            btnLogin.innerText = "Masuk";
-            btnLogin.disabled = false;
-            errorMsg.innerText = "Detail Error: " + err.message + "\n(Jika pakai localhost di HP, pastikan server lokal lo mendukung HTTPS atau tes langsung lewat GitHub Pages).";
-            errorMsg.style.display = "block";
-        });
-    });
+        } catch (err) {
+            showToast("Server error, coba lagi nanti.", "error");
+            btn.innerText = "Login";
+            btn.disabled = false;
+        }
+    };
 </script>
 </body>
 </html>

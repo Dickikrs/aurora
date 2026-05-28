@@ -3,123 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aurora Store - Dashboard</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background: #121212; color: #fff; padding: 20px; }
-        .header { display: flex; justify-content: space-between; align-items: center; background: #1e1e1e; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; }
-        .logo { color: #00adb5; font-weight: bold; font-size: 20px; }
-        .user-info { text-align: right; }
-        .saldo-box { font-size: 18px; color: #28a745; font-weight: bold; margin-top: 5px; }
-        .logout-btn { background: #ff5252; padding: 5px 10px; border: none; border-radius: 4px; color: white; cursor: pointer; font-size: 12px; margin-top: 5px; }
-        
-        h3 { margin-bottom: 15px; color: #00adb5; }
-        .produk-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
-        .produk-card { background: #1e1e1e; padding: 15px; border-radius: 8px; border: 1px solid #333; display: flex; flex-direction: column; justify-content: space-between; }
-        .produk-title { font-weight: bold; font-size: 16px; margin-bottom: 8px; }
-        .produk-meta { font-size: 13px; color: #aaa; margin-bottom: 12px; }
-        .produk-harga { font-size: 18px; color: #ffc107; font-weight: bold; margin-bottom: 12px; }
-        .btn-beli { background: #00adb5; border: none; padding: 10px; border-radius: 6px; color: white; font-weight: bold; cursor: pointer; text-align: center; }
-        .btn-beli:hover { background: #007a80; }
-        .loading { text-align: center; color: #aaa; padding: 4px; width: 100%; grid-column: 1/-1; }
-    </style>
+    <title>Daftar ke Aurorastore</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="header">
-    <div class="logo">AURORA STORE</div>
-    <div class="user-info">
-        <div id="txtUsername" style="font-weight: bold;">Memuat user...</div>
-        <div id="txtSaldo" class="saldo-box">Rp 0</div>
-        <button class="logout-btn" onclick="logout()">Keluar</button>
+<!-- Loader Screen (Satu saja, tidak perlu duplikat) -->
+<div id="loader" class="loader-container">
+    <div class="planet"></div>
+</div>
+
+<div class="glass-card">
+    <h2 class="text-3xl font-bold mb-6 text-white text-center">Daftar Aurorastore</h2>
+    
+    <form id="daftarForm" class="space-y-4">
+        <div class="text-white">
+            <label class="block text-sm">Nama Lengkap</label>
+            <input type="text" id="nama" required class="w-full p-3 rounded-xl mt-1 outline-none text-gray-800">
+        </div>
+        <div class="text-white">
+            <label class="block text-sm">Email</label>
+            <input type="email" id="email" required placeholder="email@example.com" class="w-full p-3 rounded-xl mt-1 outline-none text-gray-800">
+        </div>
+        <div class="relative text-white">
+            <label class="block text-sm">Password</label>
+            <div class="relative mt-1">
+                <input type="password" id="password" requered minlegth="6" required placeholder="********" class="w-full p-3 rounded-xl outline-none text-gray-800 pr-10">
+                <span onclick="togglePassword()" class="absolute right-4 top-3.5 cursor-pointer text-gray-500 hover:text-blue-500 transition">
+                    <i id="eyeIcon" class="fas fa-eye"></i>
+                </span>
+            </div>
+        </div>
+        <div class="text-white">
+            <label class="block text-sm">Nomor Whatsapp</label>
+            <input type="tel" id="wa" required class="w-full p-3 rounded-xl mt-1 outline-none text-gray-800">
+        </div>
+        <button type="submit" class="w-full text-white p-3 rounded-xl font-semibold mt-4 hover:opacity-90 transition">
+            Lanjut Verifikasi OTP
+        </button>
+    </form>
+
+    <div class="mt-6 text-center text-white">
+        <p class="text-sm">Sudah punya akun?</p>
+        <a href="login.html" class="font-bold underline">Login di sini</a>
     </div>
 </div>
 
-<h3>Daftar Produk Aktif</h3>
-<div class="produk-container" id="gridProduk">
-    <div class="loading" id="txtLoading">Sedang memuat produk dari Google Sheet...</div>
+<!-- Astronot -->
+<div class="floating-astronaut">
+    <img src="https://pngimg.com/uploads/astronaut/astronaut_PNG41.png" alt="Astronaut">
 </div>
 
 <script>
-    // GANTI dengan URL /dev dari project Apps Script baru lo
-    const API_URL = "https://script.google.com/macros/s/AKfycby-yrQviIoIeH0pPL5QmMI1L5hdI9zQ19E0Ym7VLHCHF5QQUgSkleqXpSrvtXVz1rkC/exec";
+    // 1. Fungsi Loading Screen
+    window.addEventListener("load", () => {
+        const loader = document.getElementById("loader");
+        loader.style.opacity = "0";
+        setTimeout(() => { loader.style.display = "none"; }, 500);
+    });
+
+    // 2. Fungsi Ikon Mata
+    function togglePassword() {
+        const passwordInput = document.getElementById("password");
+        const eyeIcon = document.getElementById("eyeIcon");
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            eyeIcon.classList.replace("fa-eye", "fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            eyeIcon.classList.replace("fa-eye-slash", "fa-eye");
+        }
+    }
+
+    // 3. Fungsi Toast Notification
+    function showToast(message, type) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = `fixed top-5 right-5 z-50 px-6 py-3 rounded-xl text-white shadow-lg transition-all duration-500 ${
+            type === 'error' ? 'bg-red-500' : 'bg-green-500'
+        }`;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+
+    // 4. Form Submission
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDwLZQHFxlzauMn1USwiuJzig9amx5dRDiHO1P_BGXHebCzZ5lsNMsWwyyG0Huh991/exec';
     
-    // 1. PROTEKSI HALAMAN: Cek apakah user sudah login
-    const sessionUser = localStorage.getItem("user_aurora");
-    if (!sessionUser) {
-        alert("Anda belum login! Silakan login terlebih dahulu.");
-        window.location.href = "login.html";
-    } else {
-        document.getElementById("txtUsername").innerText = "Halo, " + sessionUser;
-        // Jalankan penarikan data secara paralel
-        loadSaldo(sessionUser);
-        loadProduk();
-    }
+    document.getElementById('daftarForm').onsubmit = async (e) => {
+        e.preventDefault();
+        
+        const btn = e.target.querySelector('button');
+        const userData = {
+            nama: document.getElementById('nama').value,
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value,
+            wa: document.getElementById('wa').value
+        };
 
-    // 2. FUNGSI GET SALDO
-    function loadSaldo(username) {
-        fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify({ action: "ambil_saldo", username: username })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                // Format rupiah sederhana
-                document.getElementById("txtSaldo").innerText = "Rp " + data.saldo.toLocaleString('id-ID');
-            } else {
-                document.getElementById("txtSaldo").innerText = "Gagal mengambil saldo";
+        btn.innerText = "Memproses...";
+        btn.disabled = true;
+
+        try {
+            // A. Cek duplikasi email
+            const checkResponse = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: "checkEmail", email: userData.email })
+            });
+            const check = await checkResponse.json();
+
+            if (check.status === "error") {
+                showToast(check.message, 'error');
+                btn.innerText = "Lanjut Verifikasi OTP";
+                btn.disabled = false;
+                return;
             }
-        })
-        .catch(err => console.error("Error saldo:", err));
-    }
 
-    // 3. FUNGSI GET PRODUK
-    function loadProduk() {
-        const gridProduk = document.getElementById("gridProduk");
-        const txtLoading = document.getElementById("txtLoading");
+            // B. Simpan data sementara & kirim OTP
+            sessionStorage.setItem('tempUser', JSON.stringify(userData));
 
-        fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify({ action: "tarik_produk" })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success && data.data.length > 0) {
-                gridProduk.innerHTML = ""; // Bersihkan teks loading
-                
-                data.data.forEach(item => {
-                    const card = document.createElement("div");
-                    card.className = "produk-card";
-                    card.innerHTML = `
-                        <div>
-                            <div class="produk-title">${item.nama}</div>
-                            <div class="produk-meta">Kode: ${item.kode} | Brand: ${item.brand}</div>
-                        </div>
-                        <div>
-                            <div class="produk-harga">Rp ${item.harga.toLocaleString('id-ID')}</div>
-                            <button class="btn-beli" onclick="beliProduk('${item.kode}', '${item.nama}', ${item.harga})">Beli Sekarang</button>
-                        </div>
-                    `;
-                    gridProduk.appendChild(card);
-                });
-            } else {
-                txtLoading.innerText = "Tidak ada produk aktif yang ditemukan di sheet.";
-            }
-        })
-        .catch(err => {
-            txtLoading.innerText = "Gagal memuat produk: " + err.message;
-        });
-    }
+await fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: "sendOTP", email: userData.email })
+});
 
-    function beliProduk(kode, nama, harga) {
-        alert(`Riset Tahap 1 Sukses! Anda memilih produk:\n[${kode}] - ${nama}\nHarga: Rp ${harga.toLocaleString('id-ID')}\n\nFungsi pemotongan saldo belum diaktifkan di tahap riset data ini.`);
-    }
-
-    function logout() {
-        localStorage.removeItem("user_aurora");
-        window.location.href = "login.html";
-    }
+            // C. Pindah ke halaman verifikasi
+            window.location.href = "verifikasi.html";
+            
+        } catch (error) {
+            showToast("Gagal terhubung ke server. Pastikan internet stabil.", 'error');
+            btn.innerText = "Lanjut Verifikasi OTP";
+            btn.disabled = false;
+        }
+    };
 </script>
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed top-5 right-5 z-50 hidden px-6 py-3 rounded-xl text-white shadow-lg transition-opacity duration-300"></div>
+
 </body>
 </html>

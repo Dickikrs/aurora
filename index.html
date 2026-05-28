@@ -131,11 +131,12 @@ await fetch(SCRIPT_URL, {
             // C. Pindah ke halaman verifikasi
             window.location.href = "verifikasi.html";
             
-        } catch (error) {
-            showToast("Gagal terhubung ke server. Pastikan internet stabil.", 'error');
-            btn.innerText = "Lanjut Verifikasi OTP";
-            btn.disabled = false;
-        }
+        } catch (err) {
+    // Kita ganti ini supaya tahu error aslinya apa
+    alert("Error Detail: " + err.message); 
+    btn.innerText = "Lanjut Verifikasi OTP";
+    btn.disabled = false;
+}
     };
 </script>
 
